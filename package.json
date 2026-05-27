@@ -1,0 +1,25 @@
+{
+  "name": "life-insight",
+  "version": "0.1.0",
+  "description": "Local-first AI insights for Obsidian daily notes.",
+  "main": "main.js",
+  "scripts": {
+    "dev": "node esbuild.config.mjs",
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production"
+  },
+  "keywords": [
+    "obsidian",
+    "journal",
+    "ai",
+    "insight"
+  ],
+  "author": "Life Insight",
+  "license": "MIT",
+  "devDependencies": {
+    "@types/node": "^20.11.24",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "^0.20.1",
+    "obsidian": "^1.5.8",
+    "typescript": "^5.3.3"
+  }
+}

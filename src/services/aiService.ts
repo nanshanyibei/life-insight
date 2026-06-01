@@ -7,20 +7,20 @@ export class AiService {
     notes: DailyNote[],
     settings: LifeInsightSettings
   ): Promise<string> {
-    if (!settings.openaiApiKey.trim()) {
-      throw new Error("OpenAI API Key is not configured.");
+    if (!settings.apiKey.trim()) {
+      throw new Error("AI API Key is not configured.");
     }
 
     const prompt = this.buildWeeklyInsightPrompt(notes);
     const response = await requestUrl({
-      url: "https://api.openai.com/v1/chat/completions",
+      url: `${settings.baseUrl.replace(/\/+$/, "")}/chat/completions`,
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${settings.openaiApiKey}`
+        Authorization: `Bearer ${settings.apiKey}`
       },
       body: JSON.stringify({
-        model: settings.openaiModel,
+        model: settings.model,
         temperature: 0.4,
         messages: [
           {
@@ -38,7 +38,7 @@ export class AiService {
 
     const content = response.json?.choices?.[0]?.message?.content;
     if (typeof content !== "string" || !content.trim()) {
-      throw new Error("OpenAI returned an empty response.");
+      throw new Error("AI provider returned an empty response.");
     }
 
     return content;

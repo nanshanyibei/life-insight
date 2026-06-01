@@ -1,5 +1,7 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type LifeInsightPlugin from "./main";
+import { PROVIDER_DEFAULTS } from "./types/settings";
+import type { AiProvider } from "./types/settings";
 
 export class LifeInsightSettingTab extends PluginSettingTab {
   constructor(
@@ -16,7 +18,7 @@ export class LifeInsightSettingTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Life Insight Settings" });
     containerEl.createEl("p", {
       cls: "setting-item-description",
-      text: "Life Insight 只读取本地 Vault。日记内容仅在你点击生成洞察时发送给你配置的 OpenAI API。"
+      text: "Life Insight 只读取本地 Vault。日记内容仅在你点击生成洞察时发送给你配置的 AI Provider。"
     });
 
     new Setting(containerEl)
@@ -61,28 +63,61 @@ export class LifeInsightSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("OpenAI API Key")
+      .setName("AI Provider")
+      .setDesc("选择 OpenAI 或 SiliconFlow。切换时会填入该 Provider 的默认 Base URL 和 Model。")
+      .addDropdown((dropdown) =>
+        dropdown
+          .addOption("openai", "OpenAI")
+          .addOption("siliconflow", "SiliconFlow")
+          .setValue(this.plugin.settings.provider)
+          .onChange(async (value) => {
+            const provider = value as AiProvider;
+            this.plugin.settings.provider = provider;
+            this.plugin.settings.baseUrl = PROVIDER_DEFAULTS[provider].baseUrl;
+            this.plugin.settings.model = PROVIDER_DEFAULTS[provider].model;
+            await this.plugin.saveSettings();
+            this.display();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("Base URL")
+      .setDesc("兼容 OpenAI Chat Completions 的 API 地址。")
+      .addText((text) =>
+        text
+          .setPlaceholder(PROVIDER_DEFAULTS[this.plugin.settings.provider].baseUrl)
+          .setValue(this.plugin.settings.baseUrl)
+          .onChange(async (value) => {
+            this.plugin.settings.baseUrl =
+              value.trim() || PROVIDER_DEFAULTS[this.plugin.settings.provider].baseUrl;
+            await this.plugin.saveSettings();
+          })
+      );
+
+    new Setting(containerEl)
+      .setName("API Key")
       .setDesc("保存在本地 Obsidian 插件配置中。")
       .addText((text) => {
         text.inputEl.type = "password";
         text
           .setPlaceholder("sk-...")
-          .setValue(this.plugin.settings.openaiApiKey)
+          .setValue(this.plugin.settings.apiKey)
           .onChange(async (value) => {
-            this.plugin.settings.openaiApiKey = value.trim();
+            this.plugin.settings.apiKey = value.trim();
             await this.plugin.saveSettings();
           });
       });
 
     new Setting(containerEl)
-      .setName("OpenAI model")
-      .setDesc("默认 gpt-4o-mini。")
+      .setName("Model")
+      .setDesc("当前 Provider 的模型名称。")
       .addText((text) =>
         text
-          .setPlaceholder("gpt-4o-mini")
-          .setValue(this.plugin.settings.openaiModel)
+          .setPlaceholder(PROVIDER_DEFAULTS[this.plugin.settings.provider].model)
+          .setValue(this.plugin.settings.model)
           .onChange(async (value) => {
-            this.plugin.settings.openaiModel = value.trim() || "gpt-4o-mini";
+            this.plugin.settings.model =
+              value.trim() || PROVIDER_DEFAULTS[this.plugin.settings.provider].model;
             await this.plugin.saveSettings();
           })
       );

@@ -97,7 +97,7 @@ export class DashboardView extends ItemView {
     const grid = container.createDiv("life-insight-grid");
     this.renderStatCard(grid, "记录天数", `${readResult.foundCount} / ${settings.lookbackDays}`, "最近周期内找到的 Daily Notes");
     this.renderStatCard(grid, "缺失天数", String(readResult.missingCount), "用于检查路径或日期格式");
-    this.renderStatCard(grid, "AI 模型", settings.openaiModel, "由用户 API Key 直接调用 OpenAI");
+    this.renderStatCard(grid, "AI 模型", settings.model, `通过 ${settings.provider} 调用 AI`);
     this.renderStatCard(grid, "本地保存", ".insight-plugin", "洞察结果保存在 Vault 内");
 
     renderEmotionTrendPanel(grid, emotionScores);

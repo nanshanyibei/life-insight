@@ -106,10 +106,24 @@ export default class LifeInsightPlugin extends Plugin {
   }
 
   async loadSettings(): Promise<void> {
+    const savedData = (await this.loadData()) ?? {};
     this.settings = {
       ...DEFAULT_SETTINGS,
-      ...(await this.loadData())
+      ...savedData
     };
+
+    const legacySettings = savedData as Partial<{
+      openaiApiKey: string;
+      openaiModel: string;
+    }>;
+
+    if (!this.settings.apiKey && legacySettings.openaiApiKey) {
+      this.settings.apiKey = legacySettings.openaiApiKey;
+    }
+
+    if (!this.settings.model && legacySettings.openaiModel) {
+      this.settings.model = legacySettings.openaiModel;
+    }
   }
 
   async saveSettings(): Promise<void> {

@@ -4,7 +4,7 @@ export function renderPeoplePanel(
   container: HTMLElement,
   people: PeopleInsight[]
 ): void {
-  const panel = container.createDiv("life-insight-panel life-insight-span-4");
+  const panel = container.createDiv("life-insight-panel life-insight-span-6");
   panel.createEl("h3", {
     cls: "life-insight-panel-title",
     text: "高频人物"
@@ -21,7 +21,7 @@ export function renderPeoplePanel(
   const maxCount = Math.max(...people.map((person) => person.count), 1);
   const list = panel.createDiv("life-insight-list");
 
-  for (const person of people.slice(0, 5)) {
+  for (const person of people.slice(0, 10)) {
     const row = list.createDiv("life-insight-person-row");
     row.createSpan({ text: person.name });
     const bar = row.createDiv("life-insight-bar");
@@ -31,7 +31,7 @@ export function renderPeoplePanel(
     );
     row.createSpan({
       cls: "life-insight-muted",
-      text: `${person.count}次`
+      text: `${person.count}次 · ${person.sentiment}`
     });
   }
 }

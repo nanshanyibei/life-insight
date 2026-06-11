@@ -34,8 +34,13 @@
 }
 
 .life-insight-actions {
+  align-items: center;
   display: flex;
   gap: 8px;
+}
+
+.life-insight-select {
+  min-width: 120px;
 }
 
 .life-insight-button-primary {
@@ -63,8 +68,29 @@
   margin: 0 0 12px;
 }
 
+.life-insight-panel-header,
+.life-insight-item-header {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
+
+.life-insight-panel-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.life-insight-panel-header .life-insight-panel-title {
+  margin: 0;
+}
+
 .life-insight-span-3 {
   grid-column: span 3;
+}
+
+.life-insight-span-stat {
+  grid-column: span 2;
 }
 
 .life-insight-span-4 {
@@ -96,7 +122,8 @@
 }
 
 .life-insight-note-list,
-.life-insight-list {
+.life-insight-list,
+.life-insight-card-list {
   display: grid;
   gap: 10px;
 }
@@ -106,6 +133,35 @@
   border: 1px solid var(--li-border);
   border-radius: 8px;
   padding: 12px;
+}
+
+.life-insight-change-item,
+.life-insight-finding-item {
+  background: var(--li-panel-soft);
+  border: 1px solid var(--li-border);
+  border-radius: 8px;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+}
+
+.life-insight-item-title {
+  font-weight: 700;
+}
+
+.life-insight-pill {
+  background: color-mix(in srgb, var(--li-accent-2) 18%, transparent);
+  border: 1px solid color-mix(in srgb, var(--li-accent-2) 38%, transparent);
+  border-radius: 999px;
+  color: var(--text-normal);
+  font-size: 12px;
+  padding: 3px 8px;
+  white-space: nowrap;
+}
+
+.life-insight-confidence {
+  color: var(--text-muted);
+  font-size: 12px;
 }
 
 .life-insight-note-meta {
@@ -168,6 +224,32 @@
   grid-template-columns: minmax(70px, 1fr) 3fr auto;
 }
 
+.life-insight-emotion-table {
+  display: grid;
+  gap: 8px;
+  overflow-x: auto;
+}
+
+.life-insight-emotion-table-row {
+  align-items: center;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 70px repeat(5, minmax(90px, 1fr));
+}
+
+.life-insight-emotion-table-row.is-header {
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.life-insight-emotion-cell {
+  align-items: center;
+  display: grid;
+  gap: 6px;
+  grid-template-columns: minmax(44px, 1fr) 28px;
+}
+
 .life-insight-bar {
   background: var(--background-modifier-border);
   border-radius: 999px;
@@ -186,7 +268,18 @@
   margin: 0;
 }
 
+.life-insight-collapsible {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.life-insight-collapsible.is-collapsed {
+  display: none;
+}
+
 @media (max-width: 900px) {
+  .life-insight-span-stat,
   .life-insight-span-3,
   .life-insight-span-4,
   .life-insight-span-6,
@@ -197,5 +290,15 @@
   .life-insight-header {
     align-items: flex-start;
     flex-direction: column;
+  }
+
+  .life-insight-actions {
+    align-items: stretch;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .life-insight-emotion-table-row {
+    grid-template-columns: 64px repeat(5, 90px);
   }
 }

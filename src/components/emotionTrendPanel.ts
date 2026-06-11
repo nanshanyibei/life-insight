@@ -15,7 +15,7 @@ export function renderEmotionTrendPanel(
   container: HTMLElement,
   scores: EmotionScore[]
 ): void {
-  const panel = container.createDiv("life-insight-panel life-insight-span-8");
+  const panel = container.createDiv("life-insight-panel life-insight-span-12");
   panel.createEl("h3", {
     cls: "life-insight-panel-title",
     text: "情绪趋势"
@@ -24,23 +24,32 @@ export function renderEmotionTrendPanel(
   if (!scores.length) {
     panel.createDiv({
       cls: "life-insight-empty",
-      text: "生成洞察后会保存情绪分数，并在这里显示最近趋势。"
+      text: "生成洞察后会保存情绪分数，并在这里按日展示趋势。"
     });
     return;
   }
 
-  const latest = scores[scores.length - 1];
-  const list = panel.createDiv("life-insight-list");
-
+  const table = panel.createDiv("life-insight-emotion-table");
+  const header = table.createDiv("life-insight-emotion-table-row is-header");
+  header.createSpan({ text: "日期" });
   for (const item of EMOTION_KEYS) {
-    const value = latest[item.key];
-    const row = list.createDiv("life-insight-emotion-row");
-    row.createSpan({ text: item.label });
-    const bar = row.createDiv("life-insight-bar");
-    bar.createDiv("life-insight-bar-fill").setAttr("style", `width: ${value}%`);
-    row.createSpan({
-      cls: "life-insight-muted",
-      text: String(value)
-    });
+    header.createSpan({ text: item.label });
+  }
+
+  for (const score of scores) {
+    const row = table.createDiv("life-insight-emotion-table-row");
+    row.createSpan({ text: score.date.slice(5) || score.date });
+    for (const item of EMOTION_KEYS) {
+      const cell = row.createDiv("life-insight-emotion-cell");
+      const value = score[item.key];
+      cell.createDiv("life-insight-bar").createDiv("life-insight-bar-fill").setAttr(
+        "style",
+        `width: ${value}%`
+      );
+      cell.createSpan({
+        cls: "life-insight-muted",
+        text: String(value)
+      });
+    }
   }
 }

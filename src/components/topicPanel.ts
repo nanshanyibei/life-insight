@@ -4,7 +4,7 @@ export function renderTopicPanel(
   container: HTMLElement,
   topics: TopicInsight[]
 ): void {
-  const panel = container.createDiv("life-insight-panel life-insight-span-4");
+  const panel = container.createDiv("life-insight-panel life-insight-span-6");
   panel.createEl("h3", {
     cls: "life-insight-panel-title",
     text: "高频主题"
@@ -22,7 +22,9 @@ export function renderTopicPanel(
   for (const topic of topics) {
     list.createSpan({
       cls: "life-insight-tag",
-      text: `${topic.name}${topic.count ? ` ${topic.count}` : ""}`
+      text: `${topic.name}${topic.count ? ` ${topic.count}` : ""}${
+        topic.sentiment ? ` · ${topic.sentiment}` : ""
+      }`
     });
   }
 }

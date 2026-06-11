@@ -1,7 +1,10 @@
 import { App, PluginSettingTab, Setting } from "obsidian";
 import type LifeInsightPlugin from "./main";
-import { PROVIDER_DEFAULTS } from "./types/settings";
-import type { AiProvider } from "./types/settings";
+import {
+  ANALYSIS_RANGES,
+  PROVIDER_DEFAULTS
+} from "./types/settings";
+import type { AiProvider, AnalysisRange } from "./types/settings";
 
 export class LifeInsightSettingTab extends PluginSettingTab {
   constructor(
@@ -18,7 +21,7 @@ export class LifeInsightSettingTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Life Insight Settings" });
     containerEl.createEl("p", {
       cls: "setting-item-description",
-      text: "Life Insight 只读取本地 Vault。日记内容仅在你点击生成洞察时发送给你配置的 AI Provider。"
+      text: "Life Insight 只读取本地 Vault。日记内容仅在你点击生成洞察时发送给配置的 AI Provider。"
     });
 
     new Setting(containerEl)
@@ -36,7 +39,7 @@ export class LifeInsightSettingTab extends PluginSettingTab {
 
     new Setting(containerEl)
       .setName("Date format")
-      .setDesc("MVP 支持 YYYY、MM、DD 占位符，例如 YYYY-MM-DD.md。")
+      .setDesc("支持 YYYY、MM、DD 占位符，例如 YYYY-MM-DD.md。")
       .addText((text) =>
         text
           .setPlaceholder("YYYY-MM-DD.md")
@@ -48,19 +51,23 @@ export class LifeInsightSettingTab extends PluginSettingTab {
       );
 
     new Setting(containerEl)
-      .setName("Lookback days")
-      .setDesc("默认读取最近 7 天。")
-      .addText((text) =>
-        text
-          .setPlaceholder("7")
-          .setValue(String(this.plugin.settings.lookbackDays))
+      .setName("Default analysis range")
+      .setDesc("Dashboard 打开时默认分析的时间范围。")
+      .addDropdown((dropdown) => {
+        for (const range of ANALYSIS_RANGES) {
+          dropdown.addOption(range.value, range.label);
+        }
+
+        dropdown
+          .setValue(this.plugin.settings.analysisRange)
           .onChange(async (value) => {
-            const parsed = Number.parseInt(value, 10);
+            const range = value as AnalysisRange;
+            this.plugin.settings.analysisRange = range;
             this.plugin.settings.lookbackDays =
-              Number.isFinite(parsed) && parsed > 0 ? parsed : 7;
+              range === "all" ? 30 : Number.parseInt(range, 10);
             await this.plugin.saveSettings();
-          })
-      );
+          });
+      });
 
     new Setting(containerEl)
       .setName("AI Provider")

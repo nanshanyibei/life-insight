@@ -1,11 +1,21 @@
 import type { EmotionScore } from "../types/emotion";
-import type { WeeklyInsight } from "../types/insight";
+import type { PeriodInsight, WeeklyInsight } from "../types/insight";
 import { DataStore } from "./dataStore";
 
 export class EmotionService {
   constructor(private readonly dataStore: DataStore) {}
 
   async saveFromWeeklyInsight(insight: WeeklyInsight): Promise<void> {
+    await this.saveScores(insight);
+  }
+
+  async saveFromPeriodInsight(insight: PeriodInsight): Promise<void> {
+    await this.saveScores(insight);
+  }
+
+  private async saveScores(
+    insight: Pick<WeeklyInsight | PeriodInsight, "emotionScores">
+  ): Promise<void> {
     if (!insight.emotionScores?.length) {
       return;
     }

@@ -10,5 +10,7 @@ export interface DailyNotesReadResult {
   endDate: string;
   foundCount: number;
   missingCount: number;
+  totalDays: number;
+  coverageRate: number;
   notes: DailyNote[];
 }

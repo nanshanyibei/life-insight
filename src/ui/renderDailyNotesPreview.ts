@@ -2,17 +2,19 @@ import type { DailyNotesReadResult } from "../types/note";
 
 export function renderDailyNotesPreview(
   container: HTMLElement,
-  readResult: DailyNotesReadResult
+  readResult: DailyNotesReadResult,
+  rangeLabel: string
 ): void {
   const panel = container.createDiv("life-insight-panel life-insight-span-12");
   panel.createEl("h3", {
     cls: "life-insight-panel-title",
-    text: "最近 7 天 Daily Notes"
+    text: `${rangeLabel} Daily Notes`
   });
 
   const list = panel.createDiv("life-insight-note-list");
+  const notes = readResult.notes.slice(-30);
 
-  for (const note of readResult.notes) {
+  for (const note of notes) {
     const item = list.createDiv("life-insight-note-item");
     const meta = item.createDiv("life-insight-note-meta");
     meta.createSpan({
@@ -29,6 +31,13 @@ export function renderDailyNotesPreview(
       text: note.exists
         ? createExcerpt(note.content)
         : "这一天没有匹配到 Daily Note。"
+    });
+  }
+
+  if (readResult.notes.length > notes.length) {
+    panel.createDiv({
+      cls: "life-insight-muted",
+      text: `仅预览最近 ${notes.length} 篇，共 ${readResult.notes.length} 篇。`
     });
   }
 }

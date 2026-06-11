@@ -1,9 +1,11 @@
 import { normalizePath, Vault } from "obsidian";
 import type { EmotionScore } from "../types/emotion";
-import type { WeeklyInsight } from "../types/insight";
+import type { PeriodInsight, WeeklyInsight } from "../types/insight";
+import type { AnalysisRange } from "../types/settings";
 
 const STORE_DIR = ".insight-plugin";
 const WEEKLY_INSIGHTS_PATH = `${STORE_DIR}/weekly-insights.json`;
+const PERIOD_INSIGHTS_PATH = `${STORE_DIR}/period-insights.json`;
 const EMOTION_DATA_PATH = `${STORE_DIR}/emotion-data.json`;
 
 export class DataStore {
@@ -21,6 +23,22 @@ export class DataStore {
   async getLatestWeeklyInsight(): Promise<WeeklyInsight | null> {
     const insights = await this.readJson<WeeklyInsight[]>(WEEKLY_INSIGHTS_PATH, []);
     return insights[0] ?? null;
+  }
+
+  async savePeriodInsight(insight: PeriodInsight): Promise<void> {
+    const insights = await this.readJson<PeriodInsight[]>(PERIOD_INSIGHTS_PATH, []);
+    const nextInsights = [
+      insight,
+      ...insights.filter((item) => item.id !== insight.id)
+    ];
+    await this.writeJson(PERIOD_INSIGHTS_PATH, nextInsights);
+  }
+
+  async getLatestPeriodInsight(
+    range: AnalysisRange
+  ): Promise<PeriodInsight | null> {
+    const insights = await this.readJson<PeriodInsight[]>(PERIOD_INSIGHTS_PATH, []);
+    return insights.find((item) => item.periodType === range) ?? null;
   }
 
   async saveEmotionScores(scores: EmotionScore[]): Promise<void> {

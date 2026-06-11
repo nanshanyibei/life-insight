@@ -54,20 +54,21 @@ export default class LifeInsightPlugin extends Plugin {
 
     this.addCommand({
       id: "read-recent-daily-notes",
-      name: "Read Recent 7 Daily Notes",
+      name: "Read Daily Notes In Current Life Insight Range",
       callback: async () => {
-        const result = await this.insightService.readRecentDailyNotes(
-          this.settings
+        const result = await this.insightService.readDailyNotesByRange(
+          this.settings,
+          this.settings.analysisRange
         );
         new Notice(
-          `Life Insight: found ${result.foundCount}/${this.settings.lookbackDays} daily notes.`
+          `Life Insight: found ${result.foundCount}/${result.totalDays} daily notes.`
         );
       }
     });
 
     this.addCommand({
       id: "generate-weekly-insight",
-      name: "Generate Weekly Insight",
+      name: "Generate Life Insight",
       callback: async () => {
         await this.activateView();
         const leaves = this.app.workspace.getLeavesOfType(LIFE_INSIGHT_VIEW_TYPE);
@@ -123,6 +124,11 @@ export default class LifeInsightPlugin extends Plugin {
 
     if (!this.settings.model && legacySettings.openaiModel) {
       this.settings.model = legacySettings.openaiModel;
+    }
+
+    if (!savedData.analysisRange) {
+      this.settings.analysisRange =
+        this.settings.lookbackDays === 7 ? "7" : DEFAULT_SETTINGS.analysisRange;
     }
   }
 
